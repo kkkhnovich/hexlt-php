@@ -1,3 +1,4 @@
+fru89, [16.11.2023 16:26]
 --Лабораторная выполняется в СУБД  Oracle. 
 --Cкопируйте файл  EDU4.sql  в каталог C:\TEMP .
 --Раскройте файл и ознакомтесь со скриптом создания и заполнения таблиц для выполнения лабораторной. 
@@ -5,8 +6,8 @@
 --Столбец mstat имеет домен (s,m,d,w). s (single) - холост(ая), m (married) - женат, замужем, d (divorced) - разведен(а),
 --w (widower) - вдовец, вдова.
 --Произведите запуск Oracle и соеденитесь с БД.  Запустите скрипт EDU4.sql на выполнение.
---Вставте в эту строку Ваши ФИО, номер группы, курса. ФИО         Курносов Василий Леонидович              , подгруппа     2а       , курс 4.      
---Файл с отчётом о выполнении лабораторной создаётся путём вставки скриптов, созданных Вами программ после пунктов 1, 2.
+--Вставте в эту строку Ваши ФИО, номер группы, курса. ФИО                       , подгруппа            , курс 4.      
+--Файл с отчётом о выполнении лабораторной создаётся путём вставки скриптов, созданных Вами программ после пунктов 1, 2, 3.
 --Файл отчёта именуется фамилией студента  в английской транскрипции, с расширением .txt и сохраняется в  edufpmi.bsu.by (при возникновении непредвиденной ситуации,
 --приводящей к невозможности сохранения в edufpmi.bsu.by, высылается на почту преподавателя до дедлайна).
 --НЕ ДОПУСКАЕТСЯ УДАЛЕНИЕ ЛЮБЫХ (в том числе и первых) СТРОК ИЗ ДАННОГО ТЕКСТА!!!
@@ -15,318 +16,57 @@
 --ПРИ НЕПРАВИЛЬНОМ ОФОРМЛЕНИИ ИЛИ КОПИРОВАНИИ У ДРУГОГО СТУДЕНТА, РАБОТА НЕ ПРОВЕРЯЕТСЯ И ПОЛУЧАЕТ ОЦЕНКУ 0!!! 
 
 --1.1. Создайте пакет PackChild, включающий в свой состав процедуры ChildBonus и функцию EmpChildBonus. 
---Процедура ChildBonus должна вычислять ежегодную добавку к 
---зарплате сотрудников на детей за 2022 год и заносить её в виде дополнительной премии (с указанием значений empno, month, year, bonvalue) в первом месяце (январе) 
---следующего 2023 календарного года в поле Bonvalue таблицы Bonus. Сотрудникам не имеющим несовершеннолетних детей начислять добавку и заносить
---в таблицу Bonus не надо.
---В качестве параметров процедуре передаются проценты в зависимости от количества детей (см. правило начисления добавки).
---Функция EmpChildBonus должна вычислять ежегодную добавку за 2022 год на детей к  зарплате конкретного сотрудника 
---(номер сотрудника - параметр передаваемый функции) без занесения в таблицу. Если сотрудник не имеет детей,значение функции 
+--Процедура ChildBonus должна вычислять ежегодную материнскую добавку к зарплате сотрудниц (женщин) на детей за 2023 год и заносить её в виде дополнительной премии 
+--в декабре 2023 года в поле Bonvalue таблицы Bonus вместе с налогом на премию в поле tax (с указанием значений empno, month, year, bonvalue, tax). 
+--Женщинам не имеющим несовершеннолетних детей начислять добавку и заносить в таблицу Bonus не надо. Пол сотрудника определяется по имени. 
+--В таблице сотрудников имеются следующие женские имена: Vera, Olga, Irina, Svetlana, Larisa, Nina, Olivia, Anna.
+--В качестве параметров процедуре передаются проценты в зависимости от количества детей (см. правило начисления добавки) и процент взымаемого налога.
+--Функция EmpChildBonus должна вычислять ежегодную добавку за 2023 год на детей и взымаемый нолог для конкретной сотрудницы 
+--(номер сотрудницы - параметр передаваемый функции) без занесения в таблицу. Если сотрудница не имеет детей,значение функции 
 --равно 0.
 
--ПРАВИЛО ВЫЧИСЛЕНИЯ ДОБАВКИ
+-ПРАВИЛО ВЫЧИСЛЕНИЯ ДОБАВКИ B НАЛОГА
 
---Добавка к заработной плате на детей  вычисляется только для работавших весь декабрь 2022 году сотрудников по следующему правилу: 
---добавка равна X% от суммы должностного месячного оклада (поле minsalary таблицы job) по занимаемой в декабре 2022 года должности и всех начисленных 
---за 2022 год премий (поле bonvalue таблицы bonus), где:
---X% равны X1% , если сотрудник имеет одного ребёнка;
---X% равны X2% , если сотрудник имеет двух детей;
---X% равны X3% , если сотрудник имеет трёх и более детей.
---X1%<X2%<X3%  являются передаваемыми процедуре и функции параметрами. Кроме этого, функции в качестве параметра передаётся номер сотрудника (empno). 
+--Добавка к заработной плате на детей  вычисляется только для принятых на работу до 01.01.2023 года сотрудниц по следующему правилу: 
+--добавка равна X% от суммы должностного месячного оклада (поле minsalary таблицы job) по занимаемой в ноябре 2023 года должности и всех начисленных 
+--за 2023 год премий (поле bonvalue таблицы bonus), где:
+--X% равны X1% , если сотрудница имеет одного ребёнка;
+--X% равны X2% , если сотрудница имеет двух детей;
+--X% равны X3% , если сотрудница имеет трёх и более детей.
+--Налог составляет Y% от начисленной добавки.
+--X1%<X2%<X3%,Y%  являются передаваемыми процедуре и функции параметрами. Кроме этого, функции в качестве параметра передаётся номер сотрудницы (empno). 
 
-CREATE OR REPLACE PACKAGE PackChild AS
-    FUNCTION EmpChildBonus(employee IN INTEGER, x1 IN REAL, x2 IN REAL, x3 IN REAL) RETURN REAL;
-	PROCEDURE ChildBonus(x1 IN REAL, x2 IN REAL, x3 IN REAL);
-END PackChild;
-/
-CREATE OR REPLACE PACKAGE BODY PackChild AS
-	PROCEDURE ChildBonus(x1 IN REAL, x2 IN REAL, x3 IN REAL) IS
-		CURSOR PackChild_cursor IS
-		SELECT salaryempno, nvl(salary, 0) + nvl(bonusearnings, 0)
-		FROM ( SELECT career.empno AS salaryempno, nvl(sum(nvl(minsalary, 0)), 0) AS salary
-		   FROM career JOIN job ON job.jobno = career.jobno
-		   WHERE ( extract(YEAR FROM career.startdate) <= 2022 ) AND
-    			( ( career.enddate IS NULL )
-                OR ( ( extract(YEAR FROM career.enddate) = 2022 ) AND ( extract(MONTH FROM career.enddate) = 12 ) )
-                OR ( extract(YEAR FROM career.enddate) > 2022 ) )
-		   GROUP BY career.empno )
-		LEFT JOIN ( SELECT empno AS bonusempno, nvl(sum(nvl(bonvalue, 0)), 0) AS bonusearnings
-    		FROM bonus WHERE bonus.year = 2022 GROUP BY empno ) ON salaryempno = bonusempno;
 
-		employee INTEGER := 0;
-		earnings REAL := 0;
-		children INTEGER := 0;
-		child_bonus REAL := 0;
+--1.2. Выполните процедуру ChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, Y%=6%.
 
-		BEGIN 
-          OPEN PackChild_cursor;
-          LOOP 
-            FETCH PackChild_cursor INTO employee, earnings;
-            EXIT WHEN PackChild_cursor % NOTFOUND;
-    
-            SELECT nchild INTO children FROM emp WHERE empno = employee;
-    
-            IF (children > 0) THEN 
-              IF children = 1 THEN child_bonus := earnings * x1 / 100;
-                ELSIF children = 2 THEN child_bonus := earnings * x2 / 100;
-                ELSIF children > 2 THEN child_bonus := earnings * x3 / 100;
-              END IF;
-    
-            INSERT INTO bonus VALUES (employee, 1, 2023, child_bonus, NULL);
-    
-            END IF;
-          END LOOP;
-    		CLOSE PackChild_cursor;
-	END ChildBonus;
 
-	FUNCTION EmpChildBonus(employee IN INTEGER, x1 IN REAL, x2 IN REAL, x3 IN REAL) RETURN REAL IS bonusearnings REAL := 0;
+--1.3. Создайте запрос для просмотра записей таблицы Bonus за декабрь 2023 года. 
 
-	salary REAL := 0;
-	total REAL := 0;
-	children INTEGER := 0;
-	child_bonus REAL := 0;
-
-	BEGIN 
-		BEGIN
-    		SELECT nvl(sum(nvl(bonvalue, 0)), 0) INTO bonusearnings
-    		FROM bonus WHERE empno = employee AND bonus.year = 2022 GROUP BY empno;
-    		EXCEPTION WHEN no_data_found THEN bonusearnings := 0;
-		END;
-
-		BEGIN
-    		SELECT nvl(sum(nvl(minsalary, 0)), 0) INTO salary
-    		FROM career JOIN job ON job.jobno = career.jobno
-    		WHERE ( career.empno = employee ) AND
-            	( extract(YEAR FROM career.startdate) <= 2022 ) AND
-            	( ( career.enddate IS NULL )
-    		       OR ( ( extract(YEAR FROM career.enddate) = 2022 ) AND ( extract(MONTH FROM career.enddate) = 12 ) )
-    		       OR ( extract(YEAR FROM career.enddate) > 2022 ) )
-    		GROUP BY career.empno;
-    		EXCEPTION WHEN no_data_found THEN salary := 0;
-		END;
-
-		BEGIN
-    		SELECT nchild INTO children FROM emp WHERE empno = employee;
-    		EXCEPTION WHEN no_data_found THEN children := 0;
-		END;
-
-		total := bonusearnings + salary;
-
-		IF children = 1 THEN child_bonus := total * x1 / 100;
-    		ELSIF children = 2 THEN child_bonus := total * x2 / 100;
-    		ELSIF children > 2 THEN child_bonus := total * x3 / 100;
-		END IF;
-
-		RETURN child_bonus;
-	END EmpChildBonus;
-END PackChild;
-
---1.2. Выполните процедуру ChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%.
-BEGIN
-	PackChild.ChildBonus(30, 40, 50);
-END;
-
---1.3. Создайте запрос для просмотра записей таблицы Bonus за январь 2022 года. 
-SELECT * FROM bonus WHERE year = 2022 AND month = 1;
 
 Rollback;
---1.4. Вычислите функцию EmpChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, номер сортудника 504. и вставте запись в таблицу Bonus.
-DECLARE
-bonus_value REAL;
-BEGIN
-  	bonus_value := PackChild.EmpChildBonus(504, 30, 40, 50);
-	INSERT INTO bonus VALUES (504, 1, 2022, bonus_value, NULL);
-END;
+--1.4. Вычислите функцию EmpChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, Y%=6%, номер сортудницы 205. и вставте запись в таблицу Bonus.
 
---1.5. Создайте запрос для просмотра записей таблицы Bonus за январь 2022 года для сотрудника 504.
-SELECT * FROM bonus WHERE year = 2022 AND month = 1 AND empno = 504;
+
+--1.5. Создайте запрос для просмотра записей таблицы Bonus за декабрь 2023 года для сотрудницы 205.
+
 
 Rollback;
---2. Измените в пакете правило вычисления добавки, дополнив его требованием "Для разведенных (d) добавка начисляется только женщинам". Пол сотрудника определяется по
---имени. В таблице сотрудников имеются следующие женские имена: Vera, Olga, Irina, Svetlana, Larisa, Nina, Olivia, Anna. Если сотрудник мужчина разведен, то начение функции 
---EmpChildBonus равно 0.
-CREATE OR REPLACE PACKAGE BODY PackChild AS
-	PROCEDURE ChildBonus(x1 IN REAL, x2 IN REAL, x3 IN REAL) IS
-		CURSOR child_bonus_cursor IS
-		SELECT salaryempno,
-		       nvl(salary, 0) + nvl(bonusearnings, 0)
-		FROM
-		  ( SELECT career.empno AS salaryempno,
-		           nvl(sum(nvl(minsalary, 0)), 0) AS salary
-		   FROM career
-		   JOIN job ON job.jobno = career.jobno
-		   WHERE ( extract(YEAR
-		                   FROM career.startdate) <= 2022 )
-		     AND ( ( career.enddate IS NULL )
-		          OR ( ( extract(YEAR
-		                         FROM career.enddate) = 2022 )
-		              AND ( extract(MONTH
-		                            FROM career.enddate) = 12 ) )
-		          OR ( extract(YEAR
-		                       FROM career.enddate) > 2022 ) )
-		   GROUP BY career.empno )
-		LEFT OUTER JOIN
-		  ( SELECT empno AS bonusempno,
-		           nvl(sum(nvl(bonvalue, 0)), 0) AS bonusearnings
-		   FROM bonus
-		   WHERE bonus.year = 2022
-		   GROUP BY empno ) ON salaryempno = bonusempno;
-
-		employee INTEGER := 0;
-		earnings REAL := 0;
-		children INTEGER := 0;
-		child_bonus REAL := 0;
-		stat emp.mstat%type;
-		name emp.empname%type;
-
-		BEGIN 
-      OPEN child_bonus_cursor;
-      LOOP 
-        FETCH child_bonus_cursor INTO employee, earnings;
-        EXIT WHEN child_bonus_cursor % NOTFOUND;
-
-        SELECT nchild INTO children
-        FROM emp
-        WHERE empno = employee;
-
-		BEGIN
-            SELECT mstat INTO stat
-            FROM emp
-            WHERE empno = employee;
-		END;
-		BEGIN
-            SELECT empname INTO name
-            FROM emp
-            WHERE empno = employee;
-		END;
-
-		IF (stat = 'd') THEN 
-            IF(name LIKE '%Vera%' OR name LIKE '%Olga%' OR name LIKE '%Irina%' OR name LIKE '%Svetlana%' OR name LIKE '%Larisa%' OR name LIKE '%Nina%' OR name LIKE '%Olivia%' OR name LIKE '%Anna%') THEN
-		IF (children > 0) THEN 
-          IF children = 1 THEN child_bonus := earnings * x1 / 100;
-            ELSIF children = 2 THEN child_bonus := earnings * x2 / 100;
-            ELSIF children > 2 THEN child_bonus := earnings * x3 / 100;
-          END IF;
-			ELSE child_bonus :=0;
-			END IF;
-		ELSE
-            IF (children > 0) THEN 
-          IF children = 1 THEN child_bonus := earnings * x1 / 100;
-            ELSIF children = 2 THEN child_bonus := earnings * x2 / 100;
-            ELSIF children > 2 THEN child_bonus := earnings * x3 / 100;
-          END IF;
-		END IF;
-END IF;
-
-        INSERT INTO bonus
-        VALUES (employee, 1, 2023, child_bonus, NULL);
-
-        END IF;
-      END LOOP;
-		CLOSE child_bonus_cursor;
-	END ChildBonus;
-
-	FUNCTION EmpChildBonus(
-		employee IN INTEGER, x1 IN REAL, x2 IN REAL, x3 IN REAL
-	) RETURN REAL IS bonusearnings REAL := 0;
-
-	salary REAL := 0;
-	total REAL := 0;
-	children INTEGER := 0;
-	child_bonus REAL := 0;
-	stat emp.mstat%type;
-	name emp.empname%type;
-
-	BEGIN 
-		BEGIN
-		SELECT nvl(sum(nvl(bonvalue, 0)), 0) INTO bonusearnings
-		FROM bonus
-		WHERE empno = employee
-		  AND bonus.year = 2022
-		GROUP BY empno;
-		EXCEPTION WHEN no_data_found THEN bonusearnings := 0;
-		END;
-
-		BEGIN
-		SELECT nvl(sum(nvl(minsalary, 0)), 0) INTO salary
-		FROM career
-		JOIN job ON job.jobno = career.jobno
-		WHERE ( career.empno = employee )
-		  AND ( extract(YEAR
-		                FROM career.startdate) <= 2022 )
-		  AND ( ( career.enddate IS NULL )
-		       OR ( ( extract(YEAR
-		                      FROM career.enddate) = 2022 )
-		           AND ( extract(MONTH
-		                         FROM career.enddate) = 12 ) )
-		       OR ( extract(YEAR
-		                    FROM career.enddate) > 2022 ) )
-		GROUP BY career.empno;
-		EXCEPTION WHEN no_data_found THEN salary := 0;
-		END;
-
-		BEGIN
-		SELECT nchild INTO children
-		FROM emp
-		WHERE empno = employee;
-		EXCEPTION WHEN no_data_found THEN children := 0;
-		END;
-
-		BEGIN
-            SELECT mstat INTO stat
-            FROM emp
-            WHERE empno = employee;
-		END;
-		BEGIN
-            SELECT empname INTO name
-            FROM emp
-            WHERE empno = employee;
-		END;
-
-		total := bonusearnings + salary;
-		IF (stat = 'd') THEN 
-            IF(name LIKE '%Vera%' OR name LIKE '%Olga%' OR name LIKE '%Irina%' OR name LIKE '%Svetlana%' OR name LIKE '%Larisa%' OR name LIKE '%Nina%' OR name LIKE '%Olivia%' OR name LIKE '%Anna%') THEN
-		IF children = 1 THEN child_bonus := total * x1 / 100;
-		ELSIF children = 2 THEN child_bonus := total * x2 / 100;
-		ELSIF children > 2 THEN child_bonus := total * x3 / 100;
-		ELSIF children = 0 THEN child_bonus := 0;
-		END IF;
-			ELSE child_bonus :=0;
-			END IF;
-		ELSE
-            IF children = 1 THEN child_bonus := total * x1 / 100;
-		ELSIF children = 2 THEN child_bonus := total * x2 / 100;
-		ELSIF children > 2 THEN child_bonus := total * x3 / 100;
-		ELSIF children = 0 THEN child_bonus := 0;
-		END IF;
-		END IF;
-
-		RETURN child_bonus;
-	END EmpChildBonus;
-END PackChild;
+--2. Измените в пакете категорию сотрудников для начисления добавки, дополнив его требованием "Добавка начисляется также мужчинам вдовцам (w)". 
+--При этом правила по приёму на работу и правила вычисления добавки  и налога для вдовцов остаются теже, что и для сотрудниц.
 
 
---2.2. Выполните процедуру ChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%.
-BEGIN
-    PackChild.ChildBonus(30, 40, 50);
-END;
+--2.2. Выполните процедуру ChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, Y%=6%.
 
+fru89, [16.11.2023 16:26]
 --2.3. Создайте запрос для просмотра записей таблицы Bonus за январь 2023 года. 
-SELECT * FROM BONUS WHERE YEAR = 2023  AND MONTH = 1;
+
 
 Rollback;
---2.4. Вычислите функцию EmpChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, номер сортудника 103. и вставте запись в таблицу Bonus.
-DECLARE
-    bonus_value REAL;
-BEGIN
-    bonus_value  := PackChild.EmpChildBonus(103, 30, 40, 50);
-    INSERT INTO BONUS (EMPNO, MONTH, YEAR, BONVALUE) VALUES (103, 1, 2023, bonus_value );
-END;
+--2.4. Вычислите функцию EmpChildBonus пакета PackChild с параметрами X1=30%, X2=40%, X3=50%, Y%=6%, номер сортудника 102 и вставте запись в таблицу Bonus.
 
---2.5. Создайте запрос для просмотра записей таблицы Bonus за январь 2023 года для сотрудника 103.
-SELECT * FROM BONUS WHERE EMPNO = 103 AND YEAR = 2023  AND MONTH = 1;
+
+--2.5. Создайте запрос для просмотра записей таблицы Bonus за декабрь 2023 года для сотрудника 102.
+
 
 Rollback;
-
-
-
+--3. Удалите пакет PackChild.
